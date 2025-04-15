@@ -1,0 +1,39 @@
+version: '3'
+services:
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: express-backend
+    ports:
+      - '5008:5008'
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URL: mongodb://mongo:27017/atlantis
+      JWT_SECRET: RavaliSecretKey@0423
+      EMAIL_USER: hivequeen2025@gmail.com
+      EMAIL_PASS: vgcm xzaq fkds vjqp
+      APP_URL: http://localhost:3000
+
+  frontend:
+    build: ./frontend
+    container_name: react-frontend
+    ports:
+      - '3000:3000'
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+    environment:
+      REACT_APP_API_URL: http://localhost:5008
+
+volumes:
+  mongo-data:
